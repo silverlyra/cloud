@@ -34,6 +34,7 @@ resource "aws_lambda_function" "bless" {
     variables = {
       bless_options_username_validation = "useradd"
       bless_options_logging_level = "DEBUG"
+      bless_ca_private_key_file = "ca"
       bless_ca_default_password = "${trimspace(file("${path.module}/../assets/bless.password"))}"
       bless_kms_auth_use_kmsauth = "True"
       bless_kms_auth_kmsauth_key_id = "${aws_kms_key.ssh.id}"
