@@ -42,6 +42,12 @@ resource "aws_lambda_function" "bless" {
   }
 }
 
+resource "aws_lambda_alias" "bless_latest" {
+  name = "latest"
+  function_name = "${aws_lambda_function.bless.arn}"
+  function_version = "$LATEST"
+}
+
 resource "aws_iam_role" "bless" {
   name = "bless"
   description = "Role for the BLESS Lambda function"
