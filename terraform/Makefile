@@ -16,6 +16,3 @@ destroy:
 
 output:
 	$(VAULT) terraform output
-
-configure-state:
-	$(VAULT) terraform remote config -backend=s3 -backend-config='bucket=union-wtf-terraform-state' -backend-config='key=cloud.tfstate' -backend-config='region=us-west-2'
