@@ -27,6 +27,10 @@ resource "aws_subnet" "public" {
   ipv6_cidr_block = "${cidrsubnet(cidrsubnet(aws_vpc.main.ipv6_cidr_block, 4, 0), 4, count.index)}"
   assign_ipv6_address_on_creation = true
   map_public_ip_on_launch = true
+
+  tags {
+    Name = "public-${count.index}"
+  }
 }
 
 resource "aws_subnet" "private" {
@@ -36,6 +40,10 @@ resource "aws_subnet" "private" {
   cidr_block        = "${cidrsubnet(aws_vpc.main.cidr_block, 4, count.index + 8)}"
   ipv6_cidr_block = "${cidrsubnet(cidrsubnet(aws_vpc.main.ipv6_cidr_block, 4, 1), 4, count.index)}"
   assign_ipv6_address_on_creation = true
+
+  tags {
+    Name = "private-${count.index}"
+  }
 }
 
 resource "aws_internet_gateway" "default" {
