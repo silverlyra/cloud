@@ -1,0 +1,14 @@
+[Unit]
+Description=Unifi Controller
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=-/usr/bin/docker stop unifi
+ExecStartPre=-/usr/bin/docker rm unifi
+ExecStart=/usr/bin/docker run -i -v /etc/localtime:/etc/localtime:ro --name unifi --volume /etc/local/unifi/:/config --net=host unifi
+
+[Install]
+WantedBy=multi-user.target

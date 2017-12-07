@@ -1,0 +1,9 @@
+---
+
+- name: Create /etc/local
+  file:
+    path: /etc/local
+    state: directory
+    owner: root
+    group: root
+    mode: 0755

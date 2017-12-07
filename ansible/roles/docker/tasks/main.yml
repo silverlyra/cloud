@@ -1,0 +1,19 @@
+---
+
+- name: install docker
+  apt:
+    name: 'docker.io'
+    state: present
+
+- name: install docker-py
+  apt:
+    name: python3-docker
+    state: present
+
+- name: create working directory to build images
+  file:
+    path: /var/local/docker
+    state: directory
+    owner: root
+    group: adm
+    mode: 0775

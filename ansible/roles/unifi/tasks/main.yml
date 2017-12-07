@@ -1,0 +1,68 @@
+---
+
+- name: create Unifi config directory
+  file:
+    path: /etc/local/unifi
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: create Docker build directory
+  file:
+    path: /var/local/docker/unifi
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: copy Docker build files
+  copy:
+    src: "docker/{{ item.name }}"
+    dest: "/var/local/docker/unifi/{{ item.name }}"
+    owner: root
+    group: root
+    mode: "{{ item.mode }}"
+  with_items:
+  - name: Dockerfile
+    mode: '0644'
+  - name: entrypoint.sh
+    mode: '0755'
+
+- name: build Unifi Docker image
+  docker_image:
+    name: unifi
+    path: /var/local/docker/unifi
+
+    # - name: create Unifi Docker container
+    #   docker_container:
+    #     state: present
+    #     name: unifi
+    #     image: unifi
+    #     volumes:
+    #       - '/etc/localtime:/etc/localtime:ro'
+    #       - '/etc/local/unifi:/config'
+    #     published_ports:
+    #       - '3478:3478/udp'
+    #       - '10001:10001/udp'
+    #       - '8080:8080'´
+    #       - '8081:8081'
+    #       - '8443:8443'
+    #       - '8843:8843'
+    #       - '8880:8880'
+
+- name: copy Unifi systemd service
+  copy:
+    src: unifi.service
+    dest: "/etc/systemd/system"
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+  - reload systemd
+  - restart unifi
+
+- name: start Unifi controller
+  systemd:
+    name: unifi.service
+    enabled: yes

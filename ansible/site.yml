@@ -3,4 +3,6 @@
 - name: home server
   hosts: home
   roles:
-  - lan
+    - { role: common, tags: common }
+    - { role: lan, tags: lan }
+    - { role: unifi, tags: unifi }
