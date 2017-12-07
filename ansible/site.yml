@@ -1,0 +1,6 @@
+---
+
+- name: home server
+  hosts: home
+  roles:
+  - lan

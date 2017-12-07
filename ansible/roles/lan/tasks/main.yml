@@ -1,0 +1,48 @@
+---
+
+- name: Install avahi
+  apt:
+    name: avahi-daemon
+    state: present
+
+- name: Install jq
+  apt:
+    name: jq
+    state: present
+
+- name: Create hostname updater directory
+  file:
+    path: /var/local/aws/hostname
+    state: directory
+    owner: aws
+    group: nogroup
+    mode: 0755
+
+- name: Copy hostname updater files
+  copy:
+    src: "{{ item.name }}"
+    dest: "/var/local/aws/hostname/{{ item.name }}"
+    owner: aws
+    group: nogroup
+    mode: "{{ item.mode }}"
+  with_items:
+  - name: hostname.jq
+    mode: '0644'
+  - name: hostname.sh
+    mode: '0755'
+
+- name: Copy hostname updater service
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/systemd/system"
+    owner: root
+    group: root
+    mode: '0644'
+  with_items:
+  - route53-hostname.service
+  - route53-hostname.timer
+
+- name: Enable hostname updater service
+  systemd:
+    name: route53-hostname.timer
+    enabled: yes

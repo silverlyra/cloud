@@ -1,0 +1,14 @@
+---
+
+- name: install awscli
+  pip:
+    name: awscli
+    state: latest
+
+- name: create aws user
+  user:
+    name: aws
+    comment: 'AWS access'
+    group: nogroup
+    home: /var/local/aws
+    system: yes

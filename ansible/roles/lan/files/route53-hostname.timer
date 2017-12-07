@@ -1,0 +1,9 @@
+[Unit]
+Description=Update Route53 record timer
+
+[Timer]
+OnBootSec=1m
+OnUnitInactiveSec=2m
+
+[Install]
+WantedBy=timers.target
