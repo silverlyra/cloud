@@ -5,6 +5,8 @@ After=network.target
 [Service]
 Type=oneshot
 WorkingDirectory=/var/local/aws/hostname
+User=aws
+Group=nogroup
 ExecStart=/var/local/aws/hostname/hostname.sh
 KillMode=process
 TimeoutStopSec=60

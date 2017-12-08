@@ -41,6 +41,8 @@
   with_items:
   - route53-hostname.service
   - route53-hostname.timer
+  notify:
+  - reload systemd
 
 - name: Enable hostname updater service
   systemd:
