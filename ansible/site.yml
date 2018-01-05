@@ -6,3 +6,4 @@
     - { role: common, tags: common }
     - { role: lan, tags: lan }
     - { role: unifi, tags: unifi }
+    - { role: media, tags: media }

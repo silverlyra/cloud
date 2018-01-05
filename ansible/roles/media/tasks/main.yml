@@ -1,0 +1,41 @@
+---
+
+- name: install zfs
+  apt:
+    name: zfsutils
+    state: present
+
+- name: ensure media zpool
+  shell: |
+    set -e
+
+    if zpool list -o name -H | grep -q ^media$; then
+      echo 'already created'
+      exit 0
+    fi
+
+    cd /dev/disk/by-id
+    ls | \
+      grep 'WD_Elements_.*-0:0$' | \
+      xargs realpath -e | \
+      xargs zpool create -m /srv/media media mirror
+  register: zpool_create
+  changed_when: '"already created" not in zpool_create.stdout'
+
+- name: install Transmission daemon
+  apt:
+    name: transmission-daemon
+    state: present
+
+- name: create media group
+  group:
+    name: media
+    system: yes
+
+- name: create media user
+  user:
+    name: media
+    comment: 'Media storage'
+    group: media
+    home: /srv/media
+    system: yes
