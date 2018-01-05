@@ -3,3 +3,10 @@
 - name: reload systemd
   systemd:
     daemon_reload: yes
+
+- name: install dotfiles
+  shell: TERM=unknown make
+  args:
+    chdir: /home/lyra/dotfiles
+  become: yes
+  become_user: lyra

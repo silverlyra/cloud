@@ -7,3 +7,52 @@
     owner: root
     group: root
     mode: 0755
+
+- name: Install common packages
+  apt:
+    name: "{{ item }}"
+    state: present
+    install_recommends: yes
+  with_items:
+  - zsh
+  - git
+
+- name: Ensure Lyra user
+  user:
+    name: lyra
+    uid: 1000
+    shell: '/bin/zsh'
+
+- name: Clone dotfiles repo
+  git:
+    repo: 'https://github.com/enaeseth/dotfiles.git'
+    dest: /home/lyra/dotfiles
+  become: yes
+  become_user: lyra
+  notify:
+  - install dotfiles
+
+- name: Create dotfile config directory
+  file:
+    path: /home/lyra/dotfiles/local
+    state: directory
+    owner: lyra
+    group: lyra
+    mode: '0755'
+
+- name: Populate dotfile config directory
+  copy:
+    content: "{{ item.content }}"
+    dest: "/home/lyra/dotfiles/local/{{ item.name }}"
+    owner: lyra
+    group: lyra
+    mode: '0644'
+  with_items:
+  - name: email
+    content: lyra@naeseth.com
+  - name: github
+    content: silverlyra
+  - name: name
+    content: 'Lyra Naeseth'
+  notify:
+  - install dotfiles

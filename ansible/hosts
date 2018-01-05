@@ -1,5 +1,7 @@
 [home]
 rainbow ansible_host=rainbow.local
+sisko ansible_host=10.0.0.3
+janeway ansible_host=10.0.0.4
 
 [home:vars]
 ansible_user=lyra

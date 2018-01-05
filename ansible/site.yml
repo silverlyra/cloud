@@ -1,9 +1,13 @@
 ---
 
-- name: home server
-  hosts: home
+- name: All hosts
+  hosts: all
   roles:
     - { role: common, tags: common }
+
+- name: Rainbow
+  hosts: rainbow
+  roles:
     - { role: lan, tags: lan }
     - { role: unifi, tags: unifi }
     - { role: media, tags: media }
