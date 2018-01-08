@@ -1,0 +1,49 @@
+{
+  "variables": {
+    "aws_access_key": "{{ env `AWS_ACCESS_KEY_ID` }}",
+    "aws_secret_key": "{{ env `AWS_SECRET_ACCESS_KEY` }}",
+    "aws_region": "{{ env `AWS_REGION` }}"
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "ssh_username": "lyra",
+      "ssh_keypair_name": null,
+      "ssh_agent_auth": true,
+      "source_ami_filter": {
+        "filters": {
+          "name": "base-ubuntu-artful-*",
+          "virtualization-type": "hvm",
+          "root-device-type": "ebs"
+        },
+        "owners": [
+          "496639197800"
+        ],
+        "most_recent": true
+      },
+      "access_key": "{{ user `aws_access_key` }}",
+      "secret_key": "{{ user `aws_secret_key` }}",
+      "region": "{{ user `aws_region` }}",
+      "tags": {
+        "Name": "common"
+      },
+      "instance_type": "t2.micro",
+      "ami_name": "common-{{ isotime \"2006-01-02-150405\" }}",
+      "user_data": "#!/usr/bin/env bash\ntouch /run/packer\n"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "ansible",
+      "playbook_file": "../ansible/site.yml",
+      "user": "lyra",
+      "extra_arguments": ["-e", "ansible_become=yes ansible_python_interpreter=/usr/bin/python3"]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "manifest",
+      "output": "ansible.manifest"
+    }
+  ]
+}
