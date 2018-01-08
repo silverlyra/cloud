@@ -14,6 +14,7 @@
     state: present
     install_recommends: yes
   with_items:
+  - make
   - zsh
   - git
 
