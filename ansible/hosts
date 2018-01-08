@@ -6,4 +6,6 @@ janeway ansible_host=10.0.0.4
 [home:vars]
 ansible_user=lyra
 ansible_become=yes
+
+[all:vars]
 ansible_python_interpreter=/usr/bin/python3
