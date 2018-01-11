@@ -10,4 +10,5 @@
   roles:
     - { role: lan, tags: lan }
     - { role: unifi, tags: unifi }
+    - { role: ups, tags: ups }
     - { role: media, tags: media }

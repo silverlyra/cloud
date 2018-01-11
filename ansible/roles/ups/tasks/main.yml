@@ -1,0 +1,6 @@
+---
+
+- name: Install apcupsd
+  apt:
+    name: apcupsd
+    state: present
