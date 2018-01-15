@@ -12,3 +12,8 @@
     - { role: unifi, tags: unifi }
     - { role: ups, tags: ups }
     - { role: media, tags: media }
+
+- name: Gateway
+  hosts: vpn
+  roles:
+    - { role: vpn, tags: vpn }

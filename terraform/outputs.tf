@@ -9,3 +9,7 @@ output "ipv6_subnet" {
 output "state_bucket" {
   value = "${aws_s3_bucket.state.id}"
 }
+
+output "vpn_access_ip" {
+  value = "${aws_eip.vpn.public_ip}"
+}

@@ -1,0 +1,48 @@
+---
+
+- name: Install awscli
+  apt:
+    name: awscli
+    state: present
+
+- name: Install strongswan
+  apt:
+    name: strongswan
+    state: present
+
+- name: Create strongswan override directory
+  file:
+    path: '/etc/systemd/system/strongswan.service.d'
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy IPsec configuration files
+  copy:
+    src: "{{ item.name }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: "{{ item.mode }}"
+  with_items:
+  - name: sysctl.conf
+    dest: '/etc/sysctl.d/60-vpn.conf'
+    mode: '0644'
+  - name: ipsec.psk
+    dest: '/etc/local/ipsec.psk'
+    mode: '0600'
+  - name: ipsec.conf
+    dest: '/etc/local/ipsec.conf.in'
+    mode: '0644'
+  - name: ipsec.secrets
+    dest: '/etc/local/ipsec.secrets.in'
+    mode: '0600'
+  - name: configure-ipsec.sh
+    dest: '/usr/local/sbin/configure-ipsec'
+    mode: '0755'
+  - name: configure.conf
+    dest: '/etc/systemd/system/strongswan.service.d/configure.conf'
+    mode: '0644'
+  notify:
+  - restart strongswan

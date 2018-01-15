@@ -18,6 +18,11 @@ variable "vpc_cidr" {
   default     = "10.1.0.0/16"
 }
 
+variable "home_cidr" {
+  description = "IPv4 range used on home network"
+  default     = "10.0.0.0/16"
+}
+
 variable "alb_log_delivery_accounts" {
   description = "AWS account ID's for ALB access logging"
 

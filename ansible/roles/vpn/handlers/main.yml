@@ -1,0 +1,6 @@
+---
+
+- name: restart strongswan
+  systemd:
+    name: strongswan.service
+    state: restarted

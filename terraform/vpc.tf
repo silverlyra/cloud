@@ -65,6 +65,11 @@ resource "aws_route_table" "public" {
   }
 
   route {
+    cidr_block = "${var.home_cidr}"
+    instance_id = "${aws_instance.vpn.id}"
+  }
+
+  route {
     ipv6_cidr_block = "::/0"
     gateway_id = "${aws_internet_gateway.default.id}"
   }
@@ -94,6 +99,11 @@ resource "aws_route_table" "private" {
   route {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = "${aws_nat_gateway.default.id}"
+  }
+
+  route {
+    cidr_block = "${var.home_cidr}"
+    instance_id = "${aws_instance.vpn.id}"
   }
 
   route {
