@@ -22,16 +22,21 @@ ip-wan() {
 }
 
 vpc-id() {
-  aws ec2 describe-vpcs --filters 'Name=isDefault,Values=true' | \
+  aws ec2 describe-vpcs --filters 'Name=tag:Name,Values=lyra' | \
     jq -r '.Vpcs[0].VpcId'
+}
+
+vpc-subnet() {
+  local VPC_ID="$1"
+  aws ec2 describe-vpcs --vpc-ids "$VPC_ID" | jq -r '.Vpcs[].CidrBlock'
 }
 
 subnet-select() {
   local VPC_ID="$1"
-  [[ -n "$1" ]] || VPC_ID="$(vpc-id)"
+  [[ -n "$VPC_ID" ]] || VPC_ID="$(vpc-id)"
 
   aws ec2 describe-subnets \
-      --filters "Name=vpc-id,Values=${VPC_ID},Name=defaultForAz,Values=true" | \
+      --filters "Name=vpc-id,Values=${VPC_ID},Name=tag:Role,Values=public" | \
     jq -r '.Subnets[].SubnetId' |
     sort -R |
     head -1
@@ -40,20 +45,31 @@ subnet-select() {
 sg-create-temporary() {
   local SG_NAME="$1"
   local AUTHORIZED_IP="$2"
+  local VPC_ID="$3"
   [[ -n "$AUTHORIZED_IP" ]] || AUTHORIZED_IP="$(ip-wan)"
+  [[ -n "$VPC_ID" ]] || VPC_ID="$(vpc-id)"
 
-  local SG_ID
+  local SG_ID VPC_SUBNET
+
+  VPC_SUBNET="$(vpc-subnet "$VPC_ID")"
 
   SG_ID="$(aws ec2 create-security-group \
+              --vpc-id "$VPC_ID" \
               --group-name "${SG_NAME}-$(date -u +%Y-%m-%dT%H:%M:%S)" \
               --description "Temporary security group" |
             jq -r .GroupId)"
+
   aws ec2 authorize-security-group-ingress \
     --group-id "$SG_ID" \
     --protocol tcp \
     --port 22 \
     --cidr "${AUTHORIZED_IP}/32"
-  ok "Created security group and authorized ingress from ${AUTHORIZED_IP}."
+  aws ec2 authorize-security-group-ingress \
+    --group-id "$SG_ID" \
+    --protocol all \
+    --cidr "${VPC_SUBNET}"
+
+  ok "Created security group and authorized ingress from ${AUTHORIZED_IP} and ${VPC_SUBNET}."
   echo "$SG_ID"
 }
 

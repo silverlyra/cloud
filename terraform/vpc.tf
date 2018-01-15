@@ -30,6 +30,7 @@ resource "aws_subnet" "public" {
 
   tags {
     Name = "public-${count.index}"
+    Role = "public"
   }
 }
 
@@ -43,6 +44,7 @@ resource "aws_subnet" "private" {
 
   tags {
     Name = "private-${count.index}"
+    Role = "private"
   }
 }
 
