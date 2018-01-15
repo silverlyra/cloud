@@ -5,11 +5,6 @@
     name: avahi-daemon
     state: present
 
-- name: Install jq
-  apt:
-    name: jq
-    state: present
-
 - name: Create hostname updater directory
   file:
     path: /var/local/aws/hostname
