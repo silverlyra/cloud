@@ -2,7 +2,8 @@
   "variables": {
     "aws_access_key": "{{ env `AWS_ACCESS_KEY_ID` }}",
     "aws_secret_key": "{{ env `AWS_SECRET_ACCESS_KEY` }}",
-    "aws_region": "{{ env `AWS_REGION` }}"
+    "aws_region": "{{ env `AWS_REGION` }}",
+    "hostgroup": "{{ env `HOSTGROUP` }}"
   },
   "builders": [
     {
@@ -25,10 +26,13 @@
       "secret_key": "{{ user `aws_secret_key` }}",
       "region": "{{ user `aws_region` }}",
       "tags": {
-        "Name": "common"
+        "Name": "{{ user `hostgroup` }}"
+      },
+      "run_tags": {
+        "Name": "ami-build-{{ user `hostgroup` }}"
       },
       "instance_type": "t2.micro",
-      "ami_name": "common-{{ isotime \"2006-01-02-150405\" }}",
+      "ami_name": "{{ user `hostgroup` }}-{{ isotime \"2006-01-02-150405\" }}",
       "user_data": "#!/usr/bin/env bash\ntouch /run/packer\n"
     }
   ],
@@ -36,8 +40,10 @@
     {
       "type": "ansible",
       "playbook_file": "../ansible/site.yml",
+      "groups": ["{{ user `hostgroup` }}"],
       "user": "lyra",
-      "extra_arguments": ["-e", "ansible_become=yes ansible_python_interpreter=/usr/bin/python3"]
+      "extra_arguments": ["-e", "ansible_become=yes ansible_python_interpreter=/usr/bin/python3"],
+      "empty_groups": ["rainbow"]
     }
   ],
   "post-processors": [
