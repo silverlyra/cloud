@@ -19,6 +19,12 @@
   - zsh
   - git
 
+- name: Install mo
+  get_url:
+    url: https://git.io/get-mo
+    dest: /usr/local/bin/mo
+    mode: '0755'
+
 - name: Ensure Lyra user
   user:
     name: lyra
