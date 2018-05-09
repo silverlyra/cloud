@@ -22,10 +22,10 @@
   register: zpool_create
   changed_when: '"already created" not in zpool_create.stdout'
 
-- name: install Transmission daemon
+- name: uninstall Transmission daemon
   apt:
     name: transmission-daemon
-    state: present
+    state: absent
 
 - name: create media group
   group:
@@ -39,3 +39,72 @@
     group: media
     home: /srv/media
     system: yes
+
+- name: create Transmission data directories
+  file:
+    path: "/srv/media/{{ item }}"
+    state: directory
+    owner: media
+    group: media
+    mode: '0750'
+  with_items:
+  - 'downloads'
+  - 'watch'
+  - '.incomplete'
+  - '.transmission'
+
+- name: create Transmission config directory
+  file:
+    path: /etc/local/private-internet-access
+    state: directory
+    owner: root
+    group: root
+    mode: '0750'
+
+- name: copy Transmission systemd service
+  copy:
+    src: transmission.service
+    dest: "/etc/systemd/system"
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+  - reload systemd
+  - restart Transmission
+
+- name: copy Transmission startup script
+  copy:
+    src: start-transmission.sh
+    dest: /usr/local/bin/start-transmission
+    owner: root
+    group: root
+    mode: '0755'
+  notify:
+  - reload systemd
+  - restart Transmission
+
+- name: configure Transmission VPN server
+  copy:
+    content: 'strong/CA Vancouver'
+    dest: "/etc/local/private-internet-access/server"
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+  - restart Transmission
+
+- name: protect Transmission VPN files
+  file:
+    state: file
+    path: "/etc/local/private-internet-access/{{ item.name }}"
+    owner: root
+    group: root
+    mode: '0400'
+  with_items:
+  - name: username
+  - name: password
+
+- name: start Transmission
+  systemd:
+    name: unifi.service
+    enabled: yes

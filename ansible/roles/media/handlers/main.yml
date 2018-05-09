@@ -1,0 +1,10 @@
+---
+
+- name: reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: restart Transmission
+  systemd:
+    name: transmission.service
+    state: restarted

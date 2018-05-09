@@ -1,0 +1,15 @@
+[Unit]
+Description=Transmission BitTorrent daemon
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=-/usr/bin/docker stop transmission
+ExecStartPre=-/usr/bin/docker rm transmission
+ExecStartPre=-/usr/bin/docker pull haugene/transmission-openvpn
+ExecStart=/usr/local/bin/start-transmission
+
+[Install]
+WantedBy=multi-user.target
